@@ -1,7 +1,8 @@
 ﻿// main.cpp
 #include <iostream>
+#include<limits>
 #include <string>
-#include "Auth.h"
+#include "auth.h"
 #include "club.h"
 #include "member.h"
 #include "coach.h"
@@ -33,7 +34,7 @@ void showAthleteMenu() {
     std::cout << "\n-- Athlete Menu --\n"
         << "1) View Profile\n"
         << "2) List& Register for Event\n"
-        << "4) Cancel Registration(delete member) \n"
+        << "3) Cancel Registration(delete member) \n"
         << "0) Logout\n"
         << "> ";
 }
@@ -45,6 +46,8 @@ void showCoachMenu() {
         << "3) Register Member for Event\n"
         << "4) Cancel Event\n"
         << "5) Organize Event\n"
+        << "6) View My Teams\n"
+        <<"7) add team"
         << "0) Logout\n"
         << "> ";
 }
@@ -328,6 +331,89 @@ void coachLoop() {
             
 
         }
+
+
+        else if (choice == "6")
+        {
+
+            Coach* self = g_club.findCoachByName(c->username);
+            cout << "\n[My Teams]\n";
+            bool found = false;
+
+            const vector<Team*>& teams = g_club.getTeams();
+            for (size_t i = 0; i < teams.size(); ++i)
+            {
+                Team* t = teams[i];
+                if (t->getCoach() == self)
+                {
+                    found = true;
+                    cout << "  • Team ID=" << t->getId()
+                        << " | Sport: " << t->getSportType()
+                        << " | Members: " << t->getMembers().size()
+                        << "\n";
+
+                    cout << "    Members:\n";
+                    const vector<Member*>& members = t->getMembers();
+
+                    for (size_t j = 0; j < members.size(); ++j)
+                    {
+                        Member* m = members[j];
+                        std::cout << "      - " << m->getName()
+                            << " (ID=" << m->getId() << ")\n";
+                    }
+                }
+
+            }
+            if (!found) 
+            {
+                std::cout << "  You are not assigned to any teams.\n";
+            }
+            pause();
+
+         }
+
+
+        else if (choice == "7")
+        {
+            cout << "\n[Add Team]\n";
+            string sport;
+            cout << "Sport Type: ";
+            getline(cin, sport);
+
+            int tid = allocId();
+
+            Coach* self = g_club.findCoachByName(c->username);
+            Team* team = new Team(sport, self, tid);
+            cout << "Enter Member IDs separated by spaces (blank line to finish):\n";
+            string line;
+            getline(std::cin, line);
+            istringstream iss(line);
+            string token;
+
+            while (iss >> token)
+            {
+                int memberid = stoi(token);
+                Member* m = g_club.findMemberById(memberid);
+
+                if (m)
+                {
+                    team->addMember(m);
+                }
+                else
+                {
+                    cout << "  - Member ID " << memberid << " not found, skipped.\n";
+                }
+            }
+
+            g_club.addTeam(team);
+            std::cout << ">> Team #" << tid << " created and assigned to you.\n";
+            pause();
+
+         }
+
+
+
+
 
         else if (choice == "0") {
             logout();
