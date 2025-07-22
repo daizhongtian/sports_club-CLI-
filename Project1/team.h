@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
-#include "Member.h"
-#include "Coach.h"
+#include "member.h"
+#include "coach.h"
 
 class Team {
 private:

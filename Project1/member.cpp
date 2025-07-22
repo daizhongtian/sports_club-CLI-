@@ -1,4 +1,4 @@
-#include "Member.h"
+#include "member.h"
 #include <iostream>
 #include <stdexcept>
 

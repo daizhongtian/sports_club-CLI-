@@ -4,14 +4,14 @@
 #include <vector>
 #include <string>
 #include "member.h"
-#include "Coach.h"
-#include "Team.h"
+#include "coach.h"
+#include "team.h"
 #include "event.h"
 #include <memory>
 #include <algorithm>
 #include "CsvUtil.h"
 #include "auth.h"
-#include <sstream>          // ¡û ÐÂÔö£ºistringstream ÓÃ
+#include <sstream>          
 
 using namespace std;
 
@@ -59,12 +59,13 @@ private:
     int nextMemberId_ = 1;
     int nextCoachId_ = 1;
     int nextEventId_ = 1;
-    int nextAppId = 1;           
+       
 
     const std::string membersFile_ = "members.csv";
     const std::string coachesFile_ = "coaches.csv";
     const std::string eventsFile_ = "events.csv";
     const std::string applicationsFile = "applications.csv";
+    const std::string teamsFile_ = "teams.csv";
 
 
 

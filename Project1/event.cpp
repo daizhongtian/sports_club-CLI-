@@ -1,6 +1,6 @@
-#include "Event.h"
+#include "event.h"
 #include <algorithm>
-#include "Team.h"
+#include "team.h"
 #include <sstream>
 #include <string>
 

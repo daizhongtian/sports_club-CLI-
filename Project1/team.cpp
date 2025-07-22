@@ -1,4 +1,4 @@
-#include "Team.h"
+#include "team.h"
 #include <algorithm>
 
 // Constructor to initialize a Team object with sport type, coach, and ID
