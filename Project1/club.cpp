@@ -1,4 +1,4 @@
-#include "Club.h"
+#include "club.h"
 #include <algorithm>
 #include <iostream>
 
@@ -6,7 +6,7 @@
 #include<string>
 #include <sstream>
 #include <fstream>
-#include "Member.h"
+#include "member.h"
 #include "CsvUtil.h"
 #include<memory>
 
@@ -389,3 +389,105 @@ void Club::loadApplications()
         applications.emplace_back(std::move(app));
     }
 }
+
+
+
+
+    void Club::saveApplications() const
+    {  
+        ofstream fout(applicationsFile, ios::trunc);  
+        if (!fout.is_open())  
+        {  
+            return;  
+        }  
+
+        for (size_t i = 0; i < applications.size(); ++i)  
+        {  
+            const unique_ptr<Application>& appPtr = applications[i]; // Define appPtr as a reference to the unique_ptr  
+            fout << appPtr->toCsv() << "\n";
+        }  
+    }
+
+    Application* Club::applyForEvent(Member* athlete, Event* ev, const string& reason)
+    {
+        unique_ptr<Application>appPtr(new Application());
+
+        appPtr->id = nextAppId++;
+		appPtr->applicant = athlete;
+        appPtr->event = ev;
+        appPtr->status = AppStatus::PENDING;
+        appPtr->reason = reason;
+        applications.push_back(std::move(appPtr));
+        saveApplications();
+		return applications.back().get();
+
+    }
+
+
+    std::vector<Application*> Club::listMyApplications(Member* athlete) const
+
+
+    {
+        vector<Application*>result;
+        for (size_t i = 0; i < applications.size(); ++i)
+        {
+            const unique_ptr<Application>& appPtr = applications[i];
+
+            if (appPtr->applicant == athlete)
+            {
+                result.push_back(appPtr.get());
+            }
+        }
+
+        return result;
+	}
+
+
+    vector<Application*>Club::listPendingApplications(Coach*)const
+    {
+        vector<Application*>result;
+        for (size_t i = 0; i < applications.size(); ++i)
+        {
+            const unique_ptr<Application>& appPtr = applications[i];
+            if (appPtr->status == AppStatus::PENDING)
+            {
+                result.push_back(appPtr.get());
+            }
+        }
+		return result;
+    }
+
+    void Club::reviewApplication(Coach* coach, int appId, bool approve) {
+        for (auto& app : applications) {
+            if (app->id == appId) {
+                if (approve) {
+                    app->status = AppStatus::APPROVED;
+                } else {
+                    app->status = AppStatus::REJECTED;
+                }
+                saveApplications();
+                return;
+            }
+        }
+        throw std::runtime_error("Application not found");
+	}
+
+
+    std::unique_ptr<Application>
+     Application::fromCsv(const std::string& line, Club& club)
+    {
+        istringstream iss(line);
+
+        string tok;
+
+        auto app = make_unique<Application>();
+
+
+        getline(iss, tok, ','); app->id = std::stoi(tok);
+        getline(iss, tok, ','); app->applicant = club.findMemberById(std::stoi(tok));
+        getline(iss, tok, ','); app->event = club.findEventById(std::stoi(tok));
+        getline(iss, tok, ','); app->status = static_cast<AppStatus>(std::stoi(tok));
+        getline(iss, app->reason);
+
+        return app;
+    }

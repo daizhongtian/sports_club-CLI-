@@ -3,27 +3,33 @@
 
 #include <vector>
 #include <string>
-#include "Member.h"
+#include "member.h"
 #include "Coach.h"
 #include "Team.h"
-#include "Event.h"
+#include "event.h"
 #include <memory>
 #include <algorithm>
 #include "CsvUtil.h"
+#include "auth.h"
+#include <sstream>          // ← 新增：istringstream 用
+
+using namespace std;
+
+class Club;
 
 
 enum class AppStatus { PENDING, APPROVED, REJECTED };
 
 
 struct Application {
-    int         id;
-    Member* applicant;
-    Event* event;
+    int id{ 0 };
+    Member* applicant{ nullptr } ;
+    Event* event{ nullptr };
     std::string reason;
     AppStatus   status = AppStatus::PENDING;
 
 
-    string toSCSv()const
+    string toCsv()const
     {
         return to_string(id) + "," + to_string(applicant->getId()) + "," + to_string(event->getId()) + "," + to_string(static_cast<int>(status)) + "," +
             reason;
@@ -32,23 +38,7 @@ struct Application {
     }
 
     static std::unique_ptr<Application>
-        fromCsv(const string& line, Club& club)
-    {
-        istringstream iss(line);
-
-        string tok;
-
-        auto app = make_unique<Application>();
-
-
-        getline(iss, tok, ','); app->id = std::stoi(tok);
-        getline(iss, tok, ','); app->applicant = club.findMemberById(std::stoi(tok));
-        getline(iss, tok, ','); app->event = club.findEventById(std::stoi(tok));
-        getline(iss, tok, ','); app->status = static_cast<AppStatus>(std::stoi(tok));
-        getline(iss, app->reason);
-
-        return app;
-    }
+    fromCsv(const std::string& line, Club& club);
 
 
 
@@ -69,10 +59,14 @@ private:
     int nextMemberId_ = 1;
     int nextCoachId_ = 1;
     int nextEventId_ = 1;
+    int nextAppId = 1;           
 
     const std::string membersFile_ = "members.csv";
     const std::string coachesFile_ = "coaches.csv";
     const std::string eventsFile_ = "events.csv";
+    const std::string applicationsFile = "applications.csv";
+
+
 
     // 新增：申请列表
     std::vector<std::unique_ptr<Application>> applications;
@@ -85,17 +79,12 @@ private:
     void saveApplications() const;
 
 
-
-
-
     void loadMembers();
     void loadCoaches();
     void loadEvents();
     void saveMembers()  const;
     void saveCoaches()  const;
     void saveEvents()   const;
-    void loadApplications();
-    void saveApplications() const;
 
 
 
@@ -126,7 +115,6 @@ public:
     void reviewApplication(Coach* coach, int appId, bool approve);
 
 
-    const std::string applicationsFile = "applications.csv";
 
 
 
