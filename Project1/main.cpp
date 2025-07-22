@@ -626,144 +626,144 @@ void adminloop()
 
 
 
-int main()
-{
-    if (!loadcredentials()) {
-        std::cerr << "Error: failed to load credentials.\n";
-        return 1;
-    }
-
-    string choice;
-
-    while (true)
-    {
-        showMainMenu();
-        getline(cin, choice);
-
-        if (choice == "1")
-        {
-            string username, password;
-            int roleint;
-            std::cout << "Username: ";
-            std::getline(std::cin, username);
-            std::cout << "Password: ";
-            std::getline(std::cin, password);
-            std::cout << "Role (0=Athlete, 1=Coach, 2=Admin): ";
-            std::string rs;
-            std::getline(std::cin, rs);
-            roleint = std::stoi(rs);
-
-            if (registeruser(username, password, static_cast<Role>(roleint)))
-            {
-                std::cout << "Registration successful.\n";
-            }
-            else {
-                std::cout << "Username already exists.\n";
-                continue;
-            }
-
-            bool clubOk = false;
-
-            try {
-                switch (static_cast<Role>(roleint))
-                {
-                case Role::ATHLETE: {
-                    string tmp;
-                    cout << "Age: "; getline(cin, tmp);
-                    int age = stoi(tmp);
-                    Member* m = new Member(username, age, "athlete", allocId());
-                    g_club.addMember(m);
-                    clubOk = true;
-                    break;
-
-                }
-                case Role::COACH:
-                {
-                    cout << "Specialty: "; string sp; getline(cin, sp);
-                    Coach* c = new Coach(username, sp, allocId());
-                    g_club.addCoach(c);                                 
-                    clubOk = true;
-                    break;
-                }
-                case Role::ADMIN:
-
-                    clubOk = true;     
-                    break;
-                }
-
-
-
-            }
-
-                catch (const std::exception&) {
-                    cout << "error。\n";
-                }
-
-
-                if (clubOk)
-                    cout << "Added to club roster.\n";
-                pause();
-
-            
-        }
-
-        else if (choice == "2")
-        {
-            // Login
-            std::string username, password;
-            std::cout << "Username: ";
-            std::getline(std::cin, username);
-            std::cout << "Password: ";
-            std::getline(std::cin, password);
-
-
-            if (login(username, password))
-            {
-                auto* c = getCurrentCredential();
-                std::cout << "Login successful. Role=" << static_cast<int>(c->role) << "\n";
-
-                switch (c->role)
-                {
-                case Role::ATHLETE:
-                    athleteloop();
-                    break;
-                case Role::COACH:
-                    coachLoop();
-                    break;
-                case Role::ADMIN:
-                    adminloop();
-                    break;
-                }
-            }
-
-            else
-            {
-                std::cout << "Login failed.\n";
-                pause();
-            }
-
-        }
-        else if (choice == "0")
-        {
-            break;
-
-        }
-        else 
-        {
-            std::cout << "Invalid option.\n";
-            pause();
-        }
-
-
-
-
-        
-    }
-
-cout << "Goodbye!\n";
-
-return 0;
-
-
-
-}
+//int main()
+//{
+//    if (!loadcredentials()) {
+//        std::cerr << "Error: failed to load credentials.\n";
+//        return 1;
+//    }
+//
+//    string choice;
+//
+//    while (true)
+//    {
+//        showMainMenu();
+//        getline(cin, choice);
+//
+//        if (choice == "1")
+//        {
+//            string username, password;
+//            int roleint;
+//            std::cout << "Username: ";
+//            std::getline(std::cin, username);
+//            std::cout << "Password: ";
+//            std::getline(std::cin, password);
+//            std::cout << "Role (0=Athlete, 1=Coach, 2=Admin): ";
+//            std::string rs;
+//            std::getline(std::cin, rs);
+//            roleint = std::stoi(rs);
+//
+//            if (registeruser(username, password, static_cast<Role>(roleint)))
+//            {
+//                std::cout << "Registration successful.\n";
+//            }
+//            else {
+//                std::cout << "Username already exists.\n";
+//                continue;
+//            }
+//
+//            bool clubOk = false;
+//
+//            try {
+//                switch (static_cast<Role>(roleint))
+//                {
+//                case Role::ATHLETE: {
+//                    string tmp;
+//                    cout << "Age: "; getline(cin, tmp);
+//                    int age = stoi(tmp);
+//                    Member* m = new Member(username, age, "athlete", allocId());
+//                    g_club.addMember(m);
+//                    clubOk = true;
+//                    break;
+//
+//                }
+//                case Role::COACH:
+//                {
+//                    cout << "Specialty: "; string sp; getline(cin, sp);
+//                    Coach* c = new Coach(username, sp, allocId());
+//                    g_club.addCoach(c);                                 
+//                    clubOk = true;
+//                    break;
+//                }
+//                case Role::ADMIN:
+//
+//                    clubOk = true;     
+//                    break;
+//                }
+//
+//
+//
+//            }
+//
+//                catch (const std::exception&) {
+//                    cout << "error。\n";
+//                }
+//
+//
+//                if (clubOk)
+//                    cout << "Added to club roster.\n";
+//                pause();
+//
+//            
+//        }
+//
+//        else if (choice == "2")
+//        {
+//            // Login
+//            std::string username, password;
+//            std::cout << "Username: ";
+//            std::getline(std::cin, username);
+//            std::cout << "Password: ";
+//            std::getline(std::cin, password);
+//
+//
+//            if (login(username, password))
+//            {
+//                auto* c = getCurrentCredential();
+//                std::cout << "Login successful. Role=" << static_cast<int>(c->role) << "\n";
+//
+//                switch (c->role)
+//                {
+//                case Role::ATHLETE:
+//                    athleteloop();
+//                    break;
+//                case Role::COACH:
+//                    coachLoop();
+//                    break;
+//                case Role::ADMIN:
+//                    adminloop();
+//                    break;
+//                }
+//            }
+//
+//            else
+//            {
+//                std::cout << "Login failed.\n";
+//                pause();
+//            }
+//
+//        }
+//        else if (choice == "0")
+//        {
+//            break;
+//
+//        }
+//        else 
+//        {
+//            std::cout << "Invalid option.\n";
+//            pause();
+//        }
+//
+//
+//
+//
+//        
+//    }
+//
+//cout << "Goodbye!\n";
+//
+//return 0;
+//
+//
+//
+//}

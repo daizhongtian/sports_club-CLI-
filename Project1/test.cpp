@@ -2,29 +2,29 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>      // for std::find
-#include "Member.h"
-#include "Coach.h"
-#include "Team.h"
-#include "Event.h"
-#include "Club.h"
+#include "member.h"
+#include "coach.h"
+#include "team.h"
+#include "event.h"
+#include "club.h"
 
 // 生成唯一 Event ID（简单自增）
 static int g_evtId = 1;
 inline int nextEventId() { return g_evtId++; }
 
-// ---------- 工具：移出容器再安全 delete ----------
+ 
 namespace {
     void removeMemberAndDelete(Club& club, Member* m) {
         club.removeMember(m);
-        delete m;
+       
     }
     void removeCoachAndDelete(Club& club, Coach* c) {
         club.removeCoach(c);
-        delete c;
+
     }
     void cancelEventAndDelete(Club& club, Event* e) {
         club.cancelEvent(e);
-        delete e;
+
     }
 }
 
@@ -334,7 +334,7 @@ void testRemoveMember() {
     cancelEventAndDelete(club, e);
     removeCoachAndDelete(club, c);
     club.removeTeam(t); 
-    delete t;
+
 }
 
 // ------------------------------------------------------------------
@@ -354,7 +354,7 @@ void testRemoveCoach() {
     bool stillInClub = std::find(club.getCoaches().begin(), club.getCoaches().end(), c1) != club.getCoaches().end();
     std::cout << (!stillInClub ? "testRemoveCoach passed" : "testRemoveCoach failed") << '\n';
 
-    club.removeTeam(t1); delete t1;
+    club.removeTeam(t1);
 }
 
 // ------------------------------------------------------------------
@@ -404,8 +404,8 @@ void testClubFunctionality() {
     cancelEventAndDelete(club, e1);
     cancelEventAndDelete(club, e2);
 removeTeamAndDelete: // helper not defined, we'll do manually
-    club.removeTeam(t1); delete t1;
-    club.removeTeam(t2); delete t2;
+    club.removeTeam(t1); 
+    club.removeTeam(t2); 
     removeCoachAndDelete(club, c1);
     removeCoachAndDelete(club, c2);
     removeMemberAndDelete(club, m1);
@@ -415,21 +415,20 @@ removeTeamAndDelete: // helper not defined, we'll do manually
     std::cout << "testClubFunctionality finished\n";
 }
 
-// ------------------------------------------------------------------
-// main
-// ------------------------------------------------------------------
-//int main() {
-//    testMember();
-//    testCoach();
-//    testTeam();
-//    testEvent();
-//    testClub();
-//    testDeleteClub();
-//    testEventScheduleConflict();
-//    testRemoveMember();
-//    testRemoveCoach();
-//    testClubFunctionality();
-//
-//    std::cout << "\nAll tests executed!\n";
-//    return 0;
-//}
+
+
+int main() {
+    testMember();
+    testCoach();
+    testTeam();
+    testEvent();
+    testClub();
+    testDeleteClub();
+    testEventScheduleConflict();
+    testRemoveMember();
+    testRemoveCoach();
+    testClubFunctionality();
+
+    std::cout << "\nAll tests executed!\n";
+    return 0;
+}
