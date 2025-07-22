@@ -147,7 +147,7 @@ Credential* getCurrentCredential()
 
 
 std::vector<Credential> getAllCredentials() {
-	return g_credentials; // g_credentials 是 Auth.cpp 里保存所有凭证的全局变量
+	return g_credentials; 
 }
 
 

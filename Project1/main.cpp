@@ -32,8 +32,7 @@ void showMainMenu() {
 void showAthleteMenu() {
     std::cout << "\n-- Athlete Menu --\n"
         << "1) View Profile\n"
-        << "2) List Events\n"
-        << "3) Register for Event\n" 
+        << "2) List& Register for Event\n"
         << "4) Cancel Registration(delete member) \n"
         << "0) Logout\n"
         << "> ";
@@ -73,7 +72,7 @@ void showAdminMenu() {
 void athleteloop()
 {
     Credential* c = getCurrentCredential();
-
+    Member* self = g_club.findMemberByName(c->username);
 
     string choice;
     while (true)
@@ -88,6 +87,90 @@ void athleteloop()
                 << "Role:     " << static_cast<int>(c->role) << "\n";
             pause();
         }
+
+        else if (choice == "2")
+        {
+            vector<Event*> evs = g_club.getEvents();
+            if (evs.empty())
+            {
+                cout << "\nNo events available.\n";
+            }
+            else
+            {
+                cout << "\n[All Events]\n";
+                for (size_t i  = 0; i < evs.size(); ++i)
+                {
+                    Event* e = evs[i];
+                    std::cout << "  " << (i + 1)
+                        << ") ID=" << e->getId()
+                        << " | " << e->getName()
+                        << " | Date: " << e->getDate()
+                        << " | Location: " << e->getLocation()
+                        << "\n";
+                }
+                cout << "\nEnter event number to register (0 to cancel): ";
+                string selection;
+                getline(cin, selection);
+                int idx = stoi(selection);
+                if (idx > 0 && idx <= static_cast<int>(evs.size()))
+                {
+                    Event* chosen = evs[idx - 1];
+                    cout << "Reason (optional): ";
+                    string reason;
+                    getline(std::cin, reason);
+
+                }
+                else
+                {
+                    cout << "  >> Registration cancelled.\n";
+                }
+
+            }
+
+
+        }
+
+
+        else if (choice == "3")
+        {
+            vector<Application*>apps = g_club.listMyApplications(self);
+            if (apps.empty()) {
+                std::cout << "\nYou have no applications.\n";
+            }
+
+            else
+            {
+                cout << "\n[My Applications]\n";
+
+                for (Application* a : apps)
+                {
+                    cout << "  • ID=" << a->id
+                        << " | Event=" << a->event->getName()
+                        << " | Status="
+                        << (a->status == AppStatus::PENDING ? "PENDING": a->status == AppStatus::APPROVED ? "APPROVED": "REJECTED")
+                        << " | Reason=" << a->reason
+                        << "\n";
+                }
+                cout << "\nEnter application ID to cancel (blank to skip): ";
+                string id_entered;
+                getline(cin, id_entered);
+                if (!id_entered.empty()) {
+                    // 用户输入了 ID，就把对应申请标记为 REJECTED（等同于“取消”）
+                    int aid = std::stoi(id_entered);
+                    g_club.reviewApplication(nullptr, aid, false);
+                    std::cout << "  >> Application " << aid << " cancelled.\n";
+                }
+
+            }
+
+        }
+
+
+
+
+
+
+
         else if(choice == "0")
         {
             logout();
