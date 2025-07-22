@@ -4,14 +4,14 @@
 #include <vector>
 #include <string>
 #include "member.h"
-#include "Coach.h"
-#include "Team.h"
+#include "coach.h"
+#include "team.h"
 #include "event.h"
 #include <memory>
 #include <algorithm>
 #include "CsvUtil.h"
 #include "auth.h"
-#include <sstream>          // ¡û ĞÂÔö£ºistringstream ÓÃ
+#include <sstream>          // â† æ–°å¢ï¼šistringstream ç”¨
 
 using namespace std;
 
@@ -68,13 +68,12 @@ private:
 
 
 
-    // ĞÂÔö£ºÉêÇëÁĞ±í
     std::vector<std::unique_ptr<Application>> applications;
     int nextAppId = 1;
 
     Role currentRole = Role::ATHLETE;
 
-    // CSV ³Ö¾Ã»¯¸¨Öú
+    // CSV æŒä¹…åŒ–è¾…åŠ©
     void loadApplications();
     void saveApplications() const;
 
@@ -98,20 +97,20 @@ public:
     ~Club();
 
 
-    // ½ÇÉ«ÇĞ»»ÓÃ
+    // è§’è‰²åˆ‡æ¢ç”¨
     void setCurrentCredential(Role r) { currentRole = r; }
     Role getCurrentRole() const { return currentRole; }
 
-    // Athlete µ÷ÓÃ£ºÌá½»ÉêÇë
+    // Athlete è°ƒç”¨ï¼šæäº¤ç”³è¯·
     Application* applyForEvent(Member* athlete, Event* ev, const std::string& reason = "");
 
-    // Athlete µ÷ÓÃ£º²é¿´×Ô¼ºÉêÇë
+    // Athlete è°ƒç”¨ï¼šæŸ¥çœ‹è‡ªå·±ç”³è¯·
     std::vector<Application*> listMyApplications(Member* athlete) const;
 
-    // Coach µ÷ÓÃ£º²é¿´´ıÉóºË
+    // Coach è°ƒç”¨ï¼šæŸ¥çœ‹å¾…å®¡æ ¸
     std::vector<Application*> listPendingApplications(Coach* coach) const;
 
-    // Coach µ÷ÓÃ£ºÉóºË
+    // Coach è°ƒç”¨ï¼šå®¡æ ¸
     void reviewApplication(Coach* coach, int appId, bool approve);
 
 

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
-#include "Member.h"
-#include "Team.h"
+#include "member.h"
+#include "team.h"
 
 class Event {
 private:

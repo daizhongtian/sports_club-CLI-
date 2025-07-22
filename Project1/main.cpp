@@ -1,7 +1,8 @@
-﻿// main.cpp
+// main.cpp
 #include <iostream>
 #include <string>
-#include "Auth.h"
+#include <limits>
+#include "auth.h"
 #include "club.h"
 #include "member.h"
 #include "coach.h"

@@ -1,6 +1,4 @@
-﻿
-
-#include "Auth.h"
+#include "auth.h"
 #include <fstream>
 #include <sstream>
 #include <vector>

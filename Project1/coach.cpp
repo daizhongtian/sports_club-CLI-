@@ -1,4 +1,4 @@
-#include "Coach.h"
+#include "coach.h"
 #include <stdexcept>
 #include <sstream>
 
