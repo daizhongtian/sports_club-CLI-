@@ -23,10 +23,10 @@ void Team::addMember(Member* member) {
 
 // Method to remove a member from the team
 void Team::removeMember(Member* member) {
-    auto it = std::find(members.begin(), members.end(), member);
-    if (it != members.end()) {
-        members.erase(it);
-    }
+    members.erase(
+        std::remove(members.begin(), members.end(), member),
+        members.end()
+    );
 }
 
 // Method to set the coach of the team
