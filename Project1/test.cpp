@@ -8,7 +8,7 @@
 #include "event.h"
 #include "club.h"
 
-// Éú³ÉÎ¨Ò» Event ID£¨¼òµ¥×ÔÔö£©
+// ç”Ÿæˆå”¯ä¸€ Event IDï¼ˆç®€å•è‡ªå¢ï¼‰
 static int g_evtId = 1;
 inline int nextEventId() { return g_evtId++; }
 
@@ -219,7 +219,6 @@ void testClub() {
         club.addMember(m2);
 
         club.removeMember(m1);
-        delete m1;
 
         Coach* c1 = new Coach("Jane", "Football", 1);
         club.addCoach(c1);
@@ -237,7 +236,7 @@ void testClub() {
         try {
             Member* dup = new Member("Dup", 20, "Athlete", 2);
             club.addMember(dup);
-            club.removeMember(dup); delete dup;
+            club.removeMember(dup);
             std::cerr << "testClub failed: duplicate member ID not caught\n";
         }
         catch (const std::invalid_argument& e) {
@@ -245,10 +244,8 @@ void testClub() {
         }
 
         club.cancelEvent(e1);
-        delete e1;                             
         club.removeCoach(c1);                 
-        delete c1;
-        // m2 ÈÔÁôÔÚ club, Îö¹¹Ê±×Ô¶¯ÊÍ·Å
+        // m2 ä»ç•™åœ¨ club, ææ„æ—¶è‡ªåŠ¨é‡Šæ”¾
         std::cout << "testClub passed\n";
     }
     catch (...) {
@@ -393,15 +390,15 @@ void testClubFunctionality() {
     std::cout << "2024-09-10: " << (club.hasScheduleConflict("2024-09-10") ? "Yes" : "No") << '\n';
 
     printDivider("Cleaning everything up");
-    club.cancelEvent(e1); delete e1;           
-    club.cancelEvent(e2); delete e2;           
-    club.removeTeam(t1);  delete t1;           
-    club.removeTeam(t2);  delete t2;          
-    club.removeCoach(c1); delete c1;           
-    club.removeCoach(c2); delete c2;          
-    club.removeMember(m1); delete m1;          
-    club.removeMember(m2); delete m2;         
-    club.removeMember(m3); delete m3;          
+    club.cancelEvent(e1);
+    club.cancelEvent(e2);           
+    club.removeTeam(t1);           
+    club.removeTeam(t2);          
+    club.removeCoach(c1);           
+    club.removeCoach(c2);          
+    club.removeMember(m1);          
+    club.removeMember(m2);         
+    club.removeMember(m3);          
 
     std::cout << "testClubFunctionality finished\n";
 }
