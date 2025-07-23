@@ -83,10 +83,12 @@ void Club::removeMember(Member* member) {
 
         // Delete the member object and remove the pointer from the vector
         std::cout << "Deleting member object..." << std::endl;
-        
+        Member* toDelete = *it;
         members.erase(it);
-
+      
         std::cout << "Removed and deleted member: " << member->getName() << std::endl;
+        delete toDelete;
+
     }
     else {
         std::cout << "Member not found in club: " << member->getName() << std::endl;
@@ -131,8 +133,9 @@ void Club::removeTeam(Team* team) {
         }
 
         // Delete the team object and remove the pointer from the vector
-        delete* it;
+        Team* toDelete = *it;
         teams.erase(it);
+        delete toDelete;
     }
 }
 

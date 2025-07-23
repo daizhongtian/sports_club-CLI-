@@ -111,7 +111,9 @@ void Event::addTeam(Team* team) {
 // Remove a team from the event
 void Event::removeTeam(Team* team) {
     auto it = std::find(teams.begin(), teams.end(), team);
-    if (it != teams.end()) {
+    if (it != teams.end()) 
+    {
+        return;
         teams.erase(it);
     }
 }
