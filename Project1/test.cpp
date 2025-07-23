@@ -12,21 +12,7 @@
 static int g_evtId = 1;
 inline int nextEventId() { return g_evtId++; }
 
- 
-namespace {
-    void removeMemberAndDelete(Club& club, Member* m) {
-        club.removeMember(m);
-       
-    }
-    void removeCoachAndDelete(Club& club, Coach* c) {
-        club.removeCoach(c);
 
-    }
-    void cancelEventAndDelete(Club& club, Event* e) {
-        club.cancelEvent(e);
-
-    }
-}
 
 // ------------------------------------------------------------------
 // 1. Member tests
@@ -232,7 +218,8 @@ void testClub() {
         club.addMember(m1);
         club.addMember(m2);
 
-        removeMemberAndDelete(club, m1);
+        club.removeMember(m1);
+        delete m1;
 
         Coach* c1 = new Coach("Jane", "Football", 1);
         club.addCoach(c1);
@@ -240,7 +227,7 @@ void testClub() {
 
         Event* e1 = new Event(nextEventId(), "2024-04-19", "Stadium", "Football Match");
         club.organizeEvent(e1);
-        cancelEventAndDelete(club, e1);
+        club.cancelEvent(e1);
 
         e1 = new Event(nextEventId(), "2024-04-19", "Stadium", "Football Match");
         club.organizeEvent(e1);
@@ -257,8 +244,10 @@ void testClub() {
             std::cout << "Duplicate member correctly rejected: " << e.what() << '\n';
         }
 
-        cancelEventAndDelete(club, e1);
-        removeCoachAndDelete(club, c1);
+        club.cancelEvent(e1);
+        delete e1;                             
+        club.removeCoach(c1);                 
+        delete c1;
         // m2 仍留在 club, 析构时自动释放
         std::cout << "testClub passed\n";
     }
@@ -301,7 +290,7 @@ void testEventScheduleConflict() {
         club.organizeEvent(e1);
         assert(club.hasScheduleConflict("2024-04-19"));
         assert(!club.hasScheduleConflict("2024-04-20"));
-        cancelEventAndDelete(club, e1);
+        club.cancelEvent(e1);
         std::cout << "testEventScheduleConflict passed\n";
     }
     catch (...) {
@@ -326,14 +315,17 @@ void testRemoveMember() {
     t->addMember(m1); t->addMember(m2);
     club.addTeam(t);
 
-    removeMemberAndDelete(club, m1);
+    club.removeMember(m1);                
     bool okTeam = (t->getMembers().size() == 1 && t->getMembers()[0]->getId() == 2);
     bool okEvt = (e->getParticipants().size() == 1 && e->getParticipants()[0]->getId() == 2);
     std::cout << (okTeam && okEvt ? "testRemoveMember passed" : "testRemoveMember failed") << '\n';
 
-    cancelEventAndDelete(club, e);
-    removeCoachAndDelete(club, c);
-    club.removeTeam(t); 
+    club.cancelEvent(e);             
+                          
+    club.removeCoach(c);             
+                          
+    club.removeTeam(t);              
+                      
 
 }
 
@@ -350,7 +342,7 @@ void testRemoveCoach() {
     t1->addMember(m1);
     club.addTeam(t1);
 
-    removeCoachAndDelete(club, c1);
+    club.removeCoach(c1);
     bool stillInClub = std::find(club.getCoaches().begin(), club.getCoaches().end(), c1) != club.getCoaches().end();
     std::cout << (!stillInClub ? "testRemoveCoach passed" : "testRemoveCoach failed") << '\n';
 
@@ -401,16 +393,15 @@ void testClubFunctionality() {
     std::cout << "2024-09-10: " << (club.hasScheduleConflict("2024-09-10") ? "Yes" : "No") << '\n';
 
     printDivider("Cleaning everything up");
-    cancelEventAndDelete(club, e1);
-    cancelEventAndDelete(club, e2);
-removeTeamAndDelete: // helper not defined, we'll do manually
-    club.removeTeam(t1); 
-    club.removeTeam(t2); 
-    removeCoachAndDelete(club, c1);
-    removeCoachAndDelete(club, c2);
-    removeMemberAndDelete(club, m1);
-    removeMemberAndDelete(club, m2);
-    removeMemberAndDelete(club, m3);
+    club.cancelEvent(e1); delete e1;           
+    club.cancelEvent(e2); delete e2;           
+    club.removeTeam(t1);  delete t1;           
+    club.removeTeam(t2);  delete t2;          
+    club.removeCoach(c1); delete c1;           
+    club.removeCoach(c2); delete c2;          
+    club.removeMember(m1); delete m1;          
+    club.removeMember(m2); delete m2;         
+    club.removeMember(m3); delete m3;          
 
     std::cout << "testClubFunctionality finished\n";
 }

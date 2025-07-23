@@ -69,10 +69,10 @@ std::vector<Member*> Event::getParticipants() const {
 
 // Remove a participant from the event
 void Event::removeParticipant(Member* member) {
-    auto it = std::find(participants.begin(), participants.end(), member);
-    if (it != participants.end()) {
-        participants.erase(it);
-    }
+    participants.erase(
+        std::remove(participants.begin(), participants.end(), member),
+        participants.end()
+    );
 }
 
 // Add a team to the event
@@ -111,11 +111,36 @@ void Event::addTeam(Team* team) {
 // Remove a team from the event
 void Event::removeTeam(Team* team) {
     auto it = std::find(teams.begin(), teams.end(), team);
-    if (it != teams.end()) 
+
+
+    if (it != teams.end())
     {
-        return;
         teams.erase(it);
+
+        for (auto* member : team->getMembers())
+        {
+            bool inOtherTeam = false; //check if member belongs othe team
+            for (auto* other : teams)
+            {
+                if (find(other->getMembers().begin(), other->getMembers().end(), member) != other->getMembers().end())
+                {
+                    inOtherTeam = true;
+                    break;
+                }
+            }
+            if (!inOtherTeam)
+            {
+                vector<Member*>::iterator pit = find(participants.begin(), participants.end(), member);
+
+                if (pit != participants.end())
+                {
+                    participants.erase(pit);
+                }
+            }
+
+        }
     }
+
 }
 
 // Get the count of participants in the event
