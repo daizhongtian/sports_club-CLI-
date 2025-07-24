@@ -8,6 +8,8 @@
 #include "event.h"
 #include "club.h"
 
+
+
 // 生成唯一 Event ID（简单自增）
 static int g_evtId = 1;
 inline int nextEventId() { return g_evtId++; }
@@ -154,14 +156,16 @@ void testTeam() {
     }
 
     // Negative team ID
+    Coach* coach = nullptr;
     try {
-        Coach* coach = new Coach("Jane", "Football", 1);
+        coach = new Coach("Jane", "Football", 1);
         Team* t = new Team("Football", coach, -1);
         std::cerr << "testTeam failed: no exception on negative ID\n";
         delete t; delete coach;
     }
     catch (const std::invalid_argument& e) {
         std::cout << "Caught expected exception for negative ID: " << e.what() << '\n';
+        delete coach;
     }
 }
 
@@ -343,7 +347,10 @@ void testRemoveCoach() {
     club.addTeam(t1);
 
     club.removeCoach(c1);
-    bool stillInClub = std::find(club.getCoaches().begin(), club.getCoaches().end(), c1) != club.getCoaches().end();
+    
+    const auto& coaches = club.getCoaches();
+
+    bool stillInClub = std::find(coaches.begin(), coaches.end(), c1) != coaches.end();
     std::cout << (!stillInClub ? "testRemoveCoach passed" : "testRemoveCoach failed") << '\n';
 
     club.removeTeam(t1);

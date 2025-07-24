@@ -111,11 +111,24 @@ void Club::addCoach(Coach* coach) {
 // Remove a coach from the club
 void Club::removeCoach(Coach* coach) {
     auto it = std::find(coaches.begin(), coaches.end(), coach);
-    if (it != coaches.end()) {
-        // Delete the coach object and remove the pointer from the vector
-         delete* it;
-        coaches.erase(it);
+    if (it == coaches.end()) {
+        cout << "Coach not found: " << coach->getName() << std::endl;
+        return;
     }
+    for (auto* t : teams)
+    {
+        if (t->getCoach() == coach)
+        {
+            t->removeCoach();
+        }
+    }
+
+    coaches.erase(it);
+    string name = coach->getName();
+    delete coach;
+
+
+
 }
 
 // Add a team to the club

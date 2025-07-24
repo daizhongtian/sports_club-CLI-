@@ -124,7 +124,12 @@ public:
     void addMember(Member* member);
     void removeMember(Member* member);
     void addCoach(Coach* coach);
+
+
     void removeCoach(Coach* coach);
+    
+
+
     void addTeam(Team* team);
     void removeTeam(Team* team);
     void organizeEvent(Event* event);
