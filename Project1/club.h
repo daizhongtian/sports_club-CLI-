@@ -148,6 +148,9 @@ public:
     Coach* findCoachById(int id) const;
     void findPersonById(int id) const;
     Event* findEventById(int id) const;
+    Team* findTeamById(int id) const;
+    bool removeTeamById(int id);
+
 
 
 

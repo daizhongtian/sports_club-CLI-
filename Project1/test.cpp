@@ -1,7 +1,7 @@
 // -------------------------  test.cpp  -------------------------
 #include <cassert>
 #include <iostream>
-#include <algorithm>      // for std::find
+#include <algorithm>      
 #include "member.h"
 #include "coach.h"
 #include "team.h"
@@ -10,7 +10,7 @@
 
 
 
-// 生成唯一 Event ID（简单自增）
+//event id
 static int g_evtId = 1;
 inline int nextEventId() { return g_evtId++; }
 
@@ -413,20 +413,48 @@ void testClubFunctionality() {
     std::cout << "testClubFunctionality finished\n";
 }
 
+void testFindTeamById() {
+    Club club("Test Club");
 
 
-int main() {
-    testMember();
-    testCoach();
-    testTeam();
-    testEvent();
-    testClub();
-    testDeleteClub();
-    testEventScheduleConflict();
-    testRemoveMember();
-    testRemoveCoach();
-    testClubFunctionality();
+    Coach* coachPtr = new Coach("Test Coach", "Football", 10);
 
-    std::cout << "\nAll tests executed!\n";
-    return 0;
+    club.addCoach(coachPtr);
+
+    Team* t1 = new Team("Football", coachPtr, 1);
+    Team* t2 = new Team("Basketball", coachPtr, 2);
+    club.addTeam(t1);
+    club.addTeam(t2);
+
+
+    assert(club.findTeamById(1) == t1);
+    assert(club.findTeamById(2) == t2);
+    assert(club.findTeamById(3) == nullptr);
+
+
+  
+    assert(club.removeTeamById(1) == true);
+    assert(club.removeTeamById(2) == true);
+
+    assert(club.removeTeamById(2) == false);
+   
 }
+
+
+//
+//int main() {
+//    testMember();
+//    testCoach();
+//    testTeam();
+//    testEvent();
+//    testClub();
+//    testDeleteClub();
+//    testEventScheduleConflict();
+//    testRemoveMember();
+//    testRemoveCoach();
+//    testClubFunctionality();
+//    testFindTeamById();
+//
+//    std::cout << "\nAll tests executed!\n";
+//    return 0;
+//}

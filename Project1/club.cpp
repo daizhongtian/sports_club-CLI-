@@ -326,6 +326,23 @@ bool Club::hasScheduleConflict(const std::string& date) const {
 }
 
 
+Team* Club::findTeamById(int id) const {
+    for (auto team : teams) {
+        if (team->getId() == id) {
+            return team;
+        }
+    }
+    return nullptr; 
+}
+
+bool Club::removeTeamById(int id) {
+    auto it = std::find_if(teams.begin(), teams.end(),
+        [id](Team* t) { return t->getId() == id; });
+    if (it == teams.end()) return false;
+    delete* it;              
+    teams.erase(it);         
+    return true;
+}
 
 
 

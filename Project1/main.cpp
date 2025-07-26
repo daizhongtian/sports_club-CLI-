@@ -606,8 +606,113 @@ void adminloop()
 
         else if (choice == "10")
         {
-           
-         }
+            string sport, coachIdStr;
+
+            cout << "sport type:";
+            getline(cin, sport);
+            cout << "coach ID";
+            int cid = stoi(coachIdStr);
+            Coach* coach = g_club.findCoachById(cid);
+            if (coach != nullptr)
+            {
+                int id = allocId();
+                Team* t = new Team(sport, coach,id);
+                g_club.addTeam(t);
+                cout << "Team added successfully.\n";
+            }
+
+            else
+            {
+                cout << "Coach not found.\n";
+            }
+            pause();
+
+        }
+
+
+        else if(choice == "11")
+        {
+            string teamid;
+            cout << "Team ID to delete: ";
+            getline(cin, teamid);
+            int id = stoi(teamid);
+            Team* t = g_club.findTeamById(id);
+            if (t != nullptr)
+            {
+                g_club.removeTeam(t);
+                cout << "Team deleted successfully.\n";
+            }
+            else
+            {
+                cout << "Team not found.\n";
+            }
+            pause();
+
+        }
+
+        else if (choice == "12")
+        {
+
+            vector<Event*>events = g_club.getEvents();
+            for (vector<Event*>::iterator it = events.begin(); it != events.end(); ++it)
+
+            {
+                Event* e = *it;
+                cout << "Name: " << e->getName()
+                    << " | Date: " << e->getDate()
+                    << " | Location: " << e->getLocation() << "\n";
+
+
+            }
+            pause();
+
+        }
+
+        else if (choice == "13")
+        {
+            string name, date, loc;
+            cout << "Event Name: ";
+            getline(cin, name);
+            cout << "Date (YYYY-MM-DD): ";
+            getline(std::cin, date);
+            int id = allocId();
+            Event* e = new Event(id, name, date, loc);
+            g_club.organizeEvent(e);
+            cout << "Event organized successfully.\n";
+            pause();
+        }
+
+        else if (choice == "14")
+        {
+
+            string name;
+            cout << "Event Name to cancel: ";
+            getline(std::cin, name);
+
+            Event* target = nullptr;
+            vector<Event*>evts = g_club.getEvents();
+            for (vector<Event*>::iterator it = evts.begin(); it != evts.end(); ++it)
+            {
+                Event* e = *it;
+                if (e->getName() == name) {
+                    target = e;
+                    break;
+                }
+
+            }
+            if (target != nullptr)
+            {
+                g_club.cancelEvent(target);
+                cout << "Event cancelled successfully.\n";
+            }
+
+            else
+            {
+                std::cout << "Event not found.\n";
+            }
+
+            pause();
+        }
 
 
         else if (choice == "0")
@@ -626,144 +731,144 @@ void adminloop()
 
 
 
-//int main()
-//{
-//    if (!loadcredentials()) {
-//        std::cerr << "Error: failed to load credentials.\n";
-//        return 1;
-//    }
-//
-//    string choice;
-//
-//    while (true)
-//    {
-//        showMainMenu();
-//        getline(cin, choice);
-//
-//        if (choice == "1")
-//        {
-//            string username, password;
-//            int roleint;
-//            std::cout << "Username: ";
-//            std::getline(std::cin, username);
-//            std::cout << "Password: ";
-//            std::getline(std::cin, password);
-//            std::cout << "Role (0=Athlete, 1=Coach, 2=Admin): ";
-//            std::string rs;
-//            std::getline(std::cin, rs);
-//            roleint = std::stoi(rs);
-//
-//            if (registeruser(username, password, static_cast<Role>(roleint)))
-//            {
-//                std::cout << "Registration successful.\n";
-//            }
-//            else {
-//                std::cout << "Username already exists.\n";
-//                continue;
-//            }
-//
-//            bool clubOk = false;
-//
-//            try {
-//                switch (static_cast<Role>(roleint))
-//                {
-//                case Role::ATHLETE: {
-//                    string tmp;
-//                    cout << "Age: "; getline(cin, tmp);
-//                    int age = stoi(tmp);
-//                    Member* m = new Member(username, age, "athlete", allocId());
-//                    g_club.addMember(m);
-//                    clubOk = true;
-//                    break;
-//
-//                }
-//                case Role::COACH:
-//                {
-//                    cout << "Specialty: "; string sp; getline(cin, sp);
-//                    Coach* c = new Coach(username, sp, allocId());
-//                    g_club.addCoach(c);                                 
-//                    clubOk = true;
-//                    break;
-//                }
-//                case Role::ADMIN:
-//
-//                    clubOk = true;     
-//                    break;
-//                }
-//
-//
-//
-//            }
-//
-//                catch (const std::exception&) {
-//                    cout << "error。\n";
-//                }
-//
-//
-//                if (clubOk)
-//                    cout << "Added to club roster.\n";
-//                pause();
-//
-//            
-//        }
-//
-//        else if (choice == "2")
-//        {
-//            // Login
-//            std::string username, password;
-//            std::cout << "Username: ";
-//            std::getline(std::cin, username);
-//            std::cout << "Password: ";
-//            std::getline(std::cin, password);
-//
-//
-//            if (login(username, password))
-//            {
-//                auto* c = getCurrentCredential();
-//                std::cout << "Login successful. Role=" << static_cast<int>(c->role) << "\n";
-//
-//                switch (c->role)
-//                {
-//                case Role::ATHLETE:
-//                    athleteloop();
-//                    break;
-//                case Role::COACH:
-//                    coachLoop();
-//                    break;
-//                case Role::ADMIN:
-//                    adminloop();
-//                    break;
-//                }
-//            }
-//
-//            else
-//            {
-//                std::cout << "Login failed.\n";
-//                pause();
-//            }
-//
-//        }
-//        else if (choice == "0")
-//        {
-//            break;
-//
-//        }
-//        else 
-//        {
-//            std::cout << "Invalid option.\n";
-//            pause();
-//        }
-//
-//
-//
-//
-//        
-//    }
-//
-//cout << "Goodbye!\n";
-//
-//return 0;
-//
-//
-//
-//}
+int main()
+{
+    if (!loadcredentials()) {
+        std::cerr << "Error: failed to load credentials.\n";
+        return 1;
+    }
+
+    string choice;
+
+    while (true)
+    {
+        showMainMenu();
+        getline(cin, choice);
+
+        if (choice == "1")
+        {
+            string username, password;
+            int roleint;
+            std::cout << "Username: ";
+            std::getline(std::cin, username);
+            std::cout << "Password: ";
+            std::getline(std::cin, password);
+            std::cout << "Role (0=Athlete, 1=Coach, 2=Admin): ";
+            std::string rs;
+            std::getline(std::cin, rs);
+            roleint = std::stoi(rs);
+
+            if (registeruser(username, password, static_cast<Role>(roleint)))
+            {
+                std::cout << "Registration successful.\n";
+            }
+            else {
+                std::cout << "Username already exists.\n";
+                continue;
+            }
+
+            bool clubOk = false;
+
+            try {
+                switch (static_cast<Role>(roleint))
+                {
+                case Role::ATHLETE: {
+                    string tmp;
+                    cout << "Age: "; getline(cin, tmp);
+                    int age = stoi(tmp);
+                    Member* m = new Member(username, age, "athlete", allocId());
+                    g_club.addMember(m);
+                    clubOk = true;
+                    break;
+
+                }
+                case Role::COACH:
+                {
+                    cout << "Specialty: "; string sp; getline(cin, sp);
+                    Coach* c = new Coach(username, sp, allocId());
+                    g_club.addCoach(c);                                 
+                    clubOk = true;
+                    break;
+                }
+                case Role::ADMIN:
+
+                    clubOk = true;     
+                    break;
+                }
+
+
+
+            }
+
+                catch (const std::exception&) {
+                    cout << "error。\n";
+                }
+
+
+                if (clubOk)
+                    cout << "Added to club roster.\n";
+                pause();
+
+            
+        }
+
+        else if (choice == "2")
+        {
+            // Login
+            std::string username, password;
+            std::cout << "Username: ";
+            std::getline(std::cin, username);
+            std::cout << "Password: ";
+            std::getline(std::cin, password);
+
+
+            if (login(username, password))
+            {
+                auto* c = getCurrentCredential();
+                std::cout << "Login successful. Role=" << static_cast<int>(c->role) << "\n";
+
+                switch (c->role)
+                {
+                case Role::ATHLETE:
+                    athleteloop();
+                    break;
+                case Role::COACH:
+                    coachLoop();
+                    break;
+                case Role::ADMIN:
+                    adminloop();
+                    break;
+                }
+            }
+
+            else
+            {
+                std::cout << "Login failed.\n";
+                pause();
+            }
+
+        }
+        else if (choice == "0")
+        {
+            break;
+
+        }
+        else 
+        {
+            std::cout << "Invalid option.\n";
+            pause();
+        }
+
+
+
+
+        
+    }
+
+cout << "Goodbye!\n";
+
+return 0;
+
+
+
+}
