@@ -59,6 +59,8 @@ private:
     int nextMemberId_ = 1;
     int nextCoachId_ = 1;
     int nextEventId_ = 1;
+    int nextTeamId_ = 1;
+
        
 
     const std::string membersFile_ = "members.csv";
@@ -86,7 +88,8 @@ private:
     void saveMembers()  const;
     void saveCoaches()  const;
     void saveEvents()   const;
-
+    void loadTeams();
+    void saveTeams() const;
 
 
 
@@ -131,6 +134,8 @@ public:
 
 
     void addTeam(Team* team);
+    Team* createTeam(const std::string& sportType, Coach* coach);
+
     void removeTeam(Team* team);
     void organizeEvent(Event* event);
     void cancelEvent(Event* event);

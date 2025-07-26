@@ -19,6 +19,7 @@ Club::Club(const std::string& name) : name(name)
     loadCoaches();
     loadEvents();
     loadApplications();
+    loadTeams();
 }
 
 // Destructor to clean up all dynamically allocated memory
@@ -132,9 +133,57 @@ void Club::removeCoach(Coach* coach) {
 }
 
 // Add a team to the club
-void Club::addTeam(Team* team) {
-    teams.push_back(team);
+void Club::addTeam(Team* team) 
+
+ {
+    for (const auto& existing : teams)
+    {
+        if (existing->getId() == team->getId())
+        {
+            throw std::invalid_argument("Team with this ID already exists in the club");
+        }
+    }
+
+       teams.push_back(team);
+       nextTeamId_ = max(nextTeamId_, team->getId() + 1);
+
 }
+
+
+Team* Club::createTeam(const string& sportType, Coach* coach)
+{
+    Team* t = new Team(sportType, coach, nextTeamId_++);
+    teams.push_back(t);
+    return t;
+}
+
+void Club::loadTeams()
+{
+    ifstream fin(teamsFile_);
+    if (!fin) return;
+    string line;
+
+    while (getline(fin, line))
+    {
+        if (line.empty()) continue;
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ',');
+        int id = std::stoi(token);
+        string sport;
+        getline(iss, sport, ',');
+        getline(iss, token, ',');
+        int coachId = std::stoi(token);
+        Coach* coach = findCoachById(coachId);
+        Team* team = new Team(sport, coach, id);
+        teams.push_back(team);
+        nextTeamId_ = std::max(nextTeamId_, id + 1);
+    }
+}
+
+
+
 
 // Remove a team from the club
 void Club::removeTeam(Team* team) {
@@ -393,10 +442,25 @@ void Club::saveCoaches() const {
 void Club::saveEvents() const {
     SaveEntities<Event>(eventsFile_, events);
 }
+
+
+
+void Club::saveTeams() const {
+    std::ofstream fout(teamsFile_, std::ios::trunc);
+    if (!fout.is_open()) return;
+    for (auto* t : teams) {
+        int cid = t->getCoach() ? t->getCoach()->getId() : 0;
+        fout << t->getId() << "," << t->getSportType() << "," << cid << "\n";
+    }
+}
+
+
 void Club::saveAll() const {
     saveMembers();
     saveCoaches();
     saveEvents();
+    saveTeams();
+
 }
 
 

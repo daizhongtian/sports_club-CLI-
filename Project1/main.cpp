@@ -380,10 +380,11 @@ void coachLoop() {
             cout << "Sport Type: ";
             getline(cin, sport);
 
-            int tid = allocId();
+
 
             Coach* self = g_club.findCoachByName(c->username);
-            Team* team = new Team(sport, self, tid);
+            Team* team = g_club.createTeam(sport, self);
+            int tid = team->getId();
             cout << "Enter Member IDs separated by spaces (blank line to finish):\n";
             string line;
             getline(std::cin, line);
@@ -405,7 +406,7 @@ void coachLoop() {
                 }
             }
 
-            g_club.addTeam(team);
+
             std::cout << ">> Team #" << tid << " created and assigned to you.\n";
             pause();
 
@@ -611,14 +612,13 @@ void adminloop()
             cout << "sport type:";
             getline(cin, sport);
             cout << "coach ID";
+            getline(cin, coachIdStr);
             int cid = stoi(coachIdStr);
             Coach* coach = g_club.findCoachById(cid);
             if (coach != nullptr)
             {
-                int id = allocId();
-                Team* t = new Team(sport, coach,id);
-                g_club.addTeam(t);
-                cout << "Team added successfully.\n";
+                Team* t = g_club.createTeam(sport, coach);
+                cout << "Team added successfully. ID=" << t->getId() << "\n";
             }
 
             else
