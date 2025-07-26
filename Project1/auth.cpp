@@ -41,7 +41,7 @@ bool loadcredentials()
 
 	if (!in)
 	{
-		return true; //if no file also no credential
+		return false; //if no file also no credential
 	}
 
 
