@@ -573,7 +573,8 @@ void Club::loadApplications()
                 return;
             }
         }
-        throw std::runtime_error("Application not found");
+        throw std::invalid_argument("Application not found");
+
 	}
 
 
