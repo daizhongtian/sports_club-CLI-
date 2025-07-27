@@ -556,7 +556,14 @@ void Club::loadApplications()
 
     void Club::reviewApplication(Coach* coach, int appId, bool approve) {
         for (auto& app : applications) {
-            if (app->id == appId) {
+            if (app->id == appId) 
+            {
+                // only for pending
+                if (app->status != AppStatus::PENDING) {
+                    throw std::invalid_argument("Application already reviewed");
+                }
+
+
                 if (approve) {
                     app->status = AppStatus::APPROVED;
                 } else {

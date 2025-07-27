@@ -159,17 +159,16 @@ TEST_F(AuthTest, SaveLoad)
 class ClubAppTest :public::testing::Test 
 {
 protected:
-    Club* club;  
-    Member* alice;
-    Member* bob;
-    Coach* coach;
-    Event* ev;
+    Club* club = nullptr;
+    Member* alice = nullptr;
+    Member* bob = nullptr;
+    Coach* coach = nullptr;
+    Event* ev = nullptr;
     string appsFile = "TestClub_applications.csv";
 
 
     void SetUp()override
     {
-        club = new Club("TestClub");
 
         {
             std::fstream fs(appsFile,
@@ -180,6 +179,8 @@ protected:
             
         }
 
+
+        club = new Club("TestClub");
 
         alice = new Member("Alice", 22, "Athlete", 1);
         bob = new Member("Bob", 25, "Athlete", 2);
@@ -232,18 +233,20 @@ TEST_F(ClubAppTest, application)
 }
 
 
-// 1. Status changes after approval & removal from pending approval list
+//  Status changes after approval & removal from pending approval list
 
 TEST_F(ClubAppTest, ReviewApplication_Approve)
 {
-
+    //new application 
     Application* app1 = club->applyForEvent(alice, ev, "Need to train");
     ASSERT_NE(app1, nullptr);
+
     auto pend0 = club->listPendingApplications(coach);
     ASSERT_EQ(pend0.size(), 1u);
 
 
     EXPECT_NO_THROW(club->reviewApplication(coach ,app1->id,  true));
+
     auto myApps = club->listMyApplications(alice);
     ASSERT_EQ(myApps.size(), 1u);
     EXPECT_EQ(myApps[0]->status, AppStatus::APPROVED);
@@ -268,14 +271,8 @@ TEST_F(ClubAppTest, ReviewApplication_Reject)
 
 
 
-
-
-
-
-
-
  //same id,and no exist id 
-TEST_F(ClubAppTest, ReviewApplication_Approve) 
+TEST_F(ClubAppTest, ReviewApplication_InvalidThrows)
 {
     Application* app1 = club->applyForEvent(alice, ev, "Train");
     ASSERT_NE(app1, nullptr);
@@ -288,6 +285,41 @@ TEST_F(ClubAppTest, ReviewApplication_Approve)
 
 
 }
+
+
+TEST_F(ClubAppTest, MultipleMembersApplications) 
+{
+    Application* a1 = club->applyForEvent(alice, ev, "A");
+    Application* b1 = club->applyForEvent(bob, ev, "B");
+    ASSERT_NE(a1, nullptr);
+    ASSERT_NE(b1, nullptr);
+    auto aliceApps = club->listMyApplications(alice);
+    auto bobApps = club->listMyApplications(bob);
+    EXPECT_EQ(aliceApps.size(), 1u);
+    EXPECT_EQ(bobApps.size(), 1u);
+    EXPECT_EQ(aliceApps[0], a1);
+    EXPECT_EQ(bobApps[0], b1);
+
+    auto pend = club->listPendingApplications(coach);
+    EXPECT_EQ(pend.size(), 2u);
+
+    EXPECT_NE(std::find(pend.begin(), pend.end(), a1), pend.end());
+    EXPECT_NE(std::find(pend.begin(), pend.end(), b1), pend.end());
+
+}
+
+//check id 
+
+
+TEST_F(ClubAppTest, ApplicationIdIncrement) {
+    Application* a1 = club->applyForEvent(alice, ev, "first");
+    Application* a2 = club->applyForEvent(alice, ev, "second");
+    ASSERT_NE(a1, nullptr);
+    ASSERT_NE(a2, nullptr);
+    EXPECT_LT(a1->id, a2->id) << "a2 should > a1";
+}
+
+
 
 
 int main(int argc, char** argv) {
