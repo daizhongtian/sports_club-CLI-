@@ -611,11 +611,19 @@ void adminloop()
 
             cout << "sport type:";
             getline(cin, sport);
-            cout << "coach ID";
+            cout << "coach ID (0 for none):";
             getline(cin, coachIdStr);
             int cid = stoi(coachIdStr);
-            Coach* coach = g_club.findCoachById(cid);
-            if (coach != nullptr)
+            Coach* coach;
+            if (cid == 0) {
+         
+                coach = nullptr;
+            }
+            else {
+
+                coach = g_club.findCoachById(cid);
+            }
+            if (coach || cid == 0)
             {
                 Team* t = g_club.createTeam(sport, coach);
                 cout << "Team added successfully. ID=" << t->getId() << "\n";

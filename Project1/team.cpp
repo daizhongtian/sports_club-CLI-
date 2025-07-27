@@ -8,9 +8,6 @@ Team::Team(const std::string& sport_type, Coach* coach, int id)
     if (sport_type.empty()) {
         throw std::invalid_argument("Sport type cannot be empty");
     }
-    if (coach == nullptr) {
-        throw std::invalid_argument("Coach cannot be null");
-    }
     if (id < 0) {
         throw std::invalid_argument("Team ID cannot be negative");
     }
