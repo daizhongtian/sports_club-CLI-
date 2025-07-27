@@ -164,7 +164,7 @@ protected:
     Member* bob = nullptr;
     Coach* coach = nullptr;
     Event* ev = nullptr;
-    string appsFile = "TestClub_applications.csv";
+    string appsFile = "applications.csv";
 
 
     void SetUp()override
@@ -245,7 +245,7 @@ TEST_F(ClubAppTest, ReviewApplication_Approve)
     ASSERT_EQ(pend0.size(), 1u);
 
 
-    EXPECT_NO_THROW(club->reviewApplication(coach ,app1->id,  true));
+    EXPECT_NO_THROW(club->reviewApplication(coach ,app1->id,true));
 
     auto myApps = club->listMyApplications(alice);
     ASSERT_EQ(myApps.size(), 1u);
@@ -280,7 +280,7 @@ TEST_F(ClubAppTest, ReviewApplication_InvalidThrows)
 
 
     EXPECT_NO_THROW(club->reviewApplication(coach,app1->id,true));
-    EXPECT_NO_THROW(club->reviewApplication(coach, app1->id, false), std::invalid_argument);
+    EXPECT_THROW(club->reviewApplication(coach, app1->id, false), std::invalid_argument);
     EXPECT_THROW(club->reviewApplication(coach,9999, true), std::invalid_argument);
 
 
