@@ -1,7 +1,8 @@
 #include "coach.h"
 #include <stdexcept>
 #include <sstream>
-
+#include <vector>
+#include <fstream>
 
 
 using namespace std;
@@ -47,23 +48,45 @@ bool Coach::operator==(const Coach& other) const {
 
 Coach* Coach::fromCsv(const string& line)
 {
-    istringstream iss(line);
+    //check ","
+    if (std::count(line.begin(), line.end(), ',') != 2) {
+        throw std::invalid_argument("Malformed CSV for Coach: expected 3 fields");
+    }
 
+
+    istringstream iss(line);
+    vector<string>tokens;
     string token;
 
-    getline(iss, token, ',');
-    int id = stoi(token);
+    while (getline(iss, token, ','))
+    {
+        tokens.push_back(token);
+    }
 
-    string name;
 
-    getline(iss, name, ',');
+    if (tokens.size() != 3) {
+        throw std::invalid_argument(
+            " 3 fields, got " +
+            std::to_string(tokens.size())
+        );
+    }
 
-    string specialty;
-    getline(iss, specialty, ',');
+    int id = 0;
+    try {
+        id = std::stoi(tokens[0]);
+    }
+    catch (const std::exception& e) {
 
-    return new Coach(name, specialty, id);
+        throw std::invalid_argument(
+            "Invalid id field in Coach CSV: " + tokens[0]
+        );
+    }
+    const std::string& name = tokens[1];
+    const std::string& specialty = tokens[2];
 
-        
+    Coach* c = new Coach(name, specialty, id);
+
+    return c;
 
 }
 

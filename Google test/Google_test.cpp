@@ -15,6 +15,7 @@
 #include "../../Project1/Project1/coach.cpp"
 #include "../../Project1/Project1/team.cpp"
 
+#include"../../Project1/Project1/CsvUtil.h"
 #include <string>
 using namespace std;  
 TEST(TestCaseName, TestName) {  
@@ -319,6 +320,161 @@ TEST_F(ClubAppTest, ApplicationIdIncrement) {
     EXPECT_LT(a1->id, a2->id) << "a2 should > a1";
 }
 
+
+
+
+
+class CsvTest :public::testing::Test
+{
+public:
+    const std::string filePath = "csv_test.txt";
+
+    void SetUp()override
+    {
+        ofstream ofs(filePath, ios::trunc);
+    }
+
+protected:
+    void TearDown()override
+    {
+        std::ofstream ofs(filePath, std::ios::out | std::ios::trunc);
+    }
+
+    
+
+};
+
+
+
+
+//member
+TEST_F(CsvTest, MemberCsv)
+{
+    Member m1("alice", 28, "Athlete", 100);
+    string line = m1.toCsv();
+    Member* m2 = Member::fromCsv(line);
+    EXPECT_TRUE(m1 == *m2);
+    delete m2;
+}
+
+//coach
+TEST_F(CsvTest, CoachCsvRoundTrip) {
+    Coach c1("Bob", "Tennis", 200);
+    std::string line = c1.toCsv();
+    Coach *c2 = Coach::fromCsv(line);
+    EXPECT_TRUE(c1 == *c2);
+    delete c2;
+}
+
+
+//event
+
+
+TEST_F(CsvTest, EventCsv)
+{
+    Event e1 (10,"2025-07-01", "park", "game");
+    string line = e1.toCsv();
+    Event* e2 = Event::fromCsv(line);
+    EXPECT_EQ(e1.getDate(), e2->getDate());
+    EXPECT_EQ(e1.getLocation(), e2->getLocation());
+    EXPECT_EQ(e1.getName(), e2->getName());
+    delete e2;
+
+
+}
+
+
+//application
+
+TEST_F(CsvTest, ApplicationCsv)
+{
+    Club club("CSVClub");
+    Member* m = new Member("Cathy", 30, "Athlete", 10);
+    Event* e = new Event(11,"2025-08-08", "Arena", "Final");
+    club.addMember(m);
+    club.organizeEvent(e);
+
+    Application app;
+
+    app.id = 5;
+    app.applicant = m;
+    app.event = e;
+    app.status = AppStatus::APPROVED;
+    app.reason = "All good";
+
+
+    string line = app.toCsv();
+    unique_ptr<Application> app2 = Application::fromCsv(line, club);
+    EXPECT_EQ(app.id, app2->id);
+    EXPECT_EQ(app.applicant, app2->applicant);
+    EXPECT_EQ(app.event, app2->event);
+    EXPECT_EQ(app.status, app2->status);
+    EXPECT_EQ(app.reason, app2->reason);
+
+}
+
+//missing error
+
+//missing member filed
+TEST_F(CsvTest, MemberCsv_error)
+
+{
+    EXPECT_THROW(Member::fromCsv("1,OnlyName,NoAge"), std::exception);
+}
+
+//missing coach filed
+TEST_F(CsvTest, CoachCsvMalformed) {
+    EXPECT_THROW(Coach::fromCsv("2,Name,Sport,Extra"), std::exception);
+}
+
+
+
+TEST_F(CsvTest, ApplicationCsvMalformed) {
+    Club club("BadApp");
+
+    //no reason
+    EXPECT_THROW(
+        { Application::fromCsv("1,99,99,0", club); },
+        std::exception
+    );
+
+
+
+}
+
+
+//  save/load
+
+
+TEST_F(CsvTest, CsvUtilRoundTrip) 
+{
+    vector<Member*> members;
+    members.push_back(new Member("X", 1, "Role", 1));
+    members.push_back(new Member("Y", 2, "Role", 2));
+    int nextId = 0;
+
+    SaveEntities<Member>(filePath, members);
+
+    for (auto* m : members)
+    {
+        delete m;
+
+    }
+    members.clear();
+     
+    loadEntities<Member>(filePath, members, nextId);
+
+    ASSERT_EQ(members.size(), 2u);
+    EXPECT_EQ(members[0]->getId(), 1);
+    EXPECT_EQ(members[1]->getId(), 2);
+
+
+    for (auto* m : members) {
+        delete m;
+    }
+    members.clear();
+
+}
 
 
 

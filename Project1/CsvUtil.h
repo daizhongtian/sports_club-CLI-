@@ -42,9 +42,16 @@ template<typename T>
 
 void SaveEntities(const string& filename, const vector<T*>container)
 {
-    ofstream fout(filename, ios::trunc);
+    ofstream ofs(filename, std::ios::out | std::ios::trunc);
+
+    if (!ofs)
+    {
+        throw std::runtime_error("Cannot open file for writing");
+    }
+
     for (auto* obj : container)
     {
-        fout << obj->toCsv() << "\n";
+        ofs << obj->toCsv() << "\n";
+
     }
 }
