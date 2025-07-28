@@ -581,18 +581,77 @@ void Club::loadApplications()
     std::unique_ptr<Application>
      Application::fromCsv(const std::string& line, Club& club)
     {
-        istringstream iss(line);
 
-        string tok;
+        int commaCount = std::count(line.begin(), line.end(), ',');
+        if (commaCount != 4) {
+            throw std::invalid_argument("Malformed CSV for Application: expected 5 fields");
+        }
+
+
+
+        istringstream iss(line);
+        string tok;//temporary 
 
         auto app = make_unique<Application>();
 
+        //id
+        std::getline(iss, tok, ',');
+        try {
+            app->id = std::stoi(tok);
+        }
+        catch (...) {
+            throw std::invalid_argument("Invalid app id in CSV");
+        }
 
-        getline(iss, tok, ','); app->id = std::stoi(tok);
-        getline(iss, tok, ','); app->applicant = club.findMemberById(std::stoi(tok));
-        getline(iss, tok, ','); app->event = club.findEventById(std::stoi(tok));
-        getline(iss, tok, ','); app->status = static_cast<AppStatus>(std::stoi(tok));
-        getline(iss, app->reason);
+        //memberid
+        std::getline(iss, tok, ',');
+        int memberid;
+        try {
+            memberid = std::stoi(tok);
+        }
+        catch (...) {
+            throw std::invalid_argument("Invalid member id in CSV");
+        }
+
+
+        app->applicant = club.findMemberById(memberid);
+        if (!app->applicant)
+        {
+            throw std::runtime_error(
+                "Application::fromCsv: member not found");
+        }
+        //eventid
+
+        std::getline(iss, tok, ',');
+        int eventid;
+        try {
+            eventid = std::stoi(tok);
+        }
+        catch (...) {
+            throw std::invalid_argument("Invalid event id in CSV");
+        }
+        app->event = club.findEventById(eventid);
+        if (!app->event) {
+            throw std::runtime_error(
+                "Application::fromCsv: event not found");
+        } 
+
+
+        //status
+
+        std::getline(iss, tok, ',');
+        try {
+            app->status = static_cast<AppStatus>(std::stoi(tok));
+        }
+        catch (...) {
+            throw std::invalid_argument("Invalid status in CSV");
+        }
+
+        //reason 
+        if (!std::getline(iss, app->reason)) {
+            throw std::invalid_argument(
+                "Missing reason field in CSV");
+        }
 
         return app;
     }
