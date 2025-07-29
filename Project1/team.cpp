@@ -1,5 +1,9 @@
 #include "team.h"
 #include <algorithm>
+#include <sstream>
+
+using namespace std;
+
 
 // Constructor to initialize a Team object with sport type, coach, and ID
 // Throws an exception if sport type is empty, coach is null, or ID is negative
@@ -72,4 +76,32 @@ Team Team::operator+(const Team& other) const {
 // Method to get the count of members in the team
 size_t Team::getMemberCount() const {
     return members.size();
+}
+
+const std::string& Team::getName() const {
+    return sport_type;
+}
+
+
+std::string Team::toCsv() const
+{
+    std::ostringstream oss;
+    // id,sportType,coachId,memberId1;memberId2;...
+    oss << id << ',' << sport_type << ',';
+
+    // coach 可能为空！
+    if (coach)
+        oss << coach->getId();
+    else
+        oss << -1;              // 约定 -1 代表无教练
+
+    oss << ',';
+
+    for (size_t i = 0; i < members.size(); ++i)
+    {
+        oss << members[i]->getId();
+        if (i + 1 < members.size())
+            oss << ';';
+    }
+    return oss.str();
 }
