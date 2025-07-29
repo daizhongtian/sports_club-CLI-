@@ -493,20 +493,18 @@ TEST_F(CsvTest, CsvUtilRoundTrip)
 
 
 
-// ============ Team 操作补充测试 ============ //
 class TeamOpTest : public ::testing::Test {
 protected:
     std::string csvPath;
 
     void SetUp() override {
-        // 临时 CSV 文件放在工作目录
         csvPath = "teams_unit_test.csv";
         std::ofstream(csvPath, std::ios::trunc).close();
     }
     void TearDown() override {
         std::remove(csvPath.c_str());
     }
-    // 统计 CSV 行数的小工具
+    
     static size_t lineCount(const std::string& file) {
         std::ifstream ifs(file);
         return std::count(std::istreambuf_iterator<char>(ifs),
@@ -514,50 +512,45 @@ protected:
     }
 };
 
-// 1) 使用 createTeam 两参版本测试持久化
+
+
 TEST_F(TeamOpTest, CreateTeamAndPersist_WithAutoId) {
     Club club("MyClub");
     Coach* coach = new Coach("Zoe", "Basketball", 42);
     club.addCoach(coach);
 
-    // 调用两参 createTeam，id 是内部自动分配的
     Team* t = club.createTeam("Basketball", coach);
     ASSERT_NE(t, nullptr);
     int assignedId = t->getId();
 
-    // 持久化所有队伍到 CSV
     SaveEntities<Team>(csvPath, club.getTeams());
     EXPECT_EQ(lineCount(csvPath), 1u);
 
-    // 读取这一行，断言第一列是 assignedId，第二列包含 "Basketball"
     std::ifstream ifs(csvPath);
     std::string line;
     ASSERT_TRUE(std::getline(ifs, line));
-    // 格式假设： id,name,coachId,memberIds...
-    // 检查 id
+
     std::string sid = std::to_string(assignedId);
     EXPECT_EQ(line.substr(0, sid.size()), sid);
-    // 检查 sportType
+
     EXPECT_NE(line.find("Basketball"), std::string::npos);
 
-    delete coach;
+
 }
 
-// ---------- 3. removeCoach() 解绑并重新持久化 ---------- //
 TEST_F(TeamOpTest, RemoveCoachAndPersist) {
     Coach* coachB = new Coach("Chris", "Swim", 99);
     Team team("Swim", coachB, 701);
     EXPECT_EQ(team.getCoach(), coachB);
 
-    team.removeCoach();                      // 解绑教练
+    team.removeCoach();                      
     EXPECT_EQ(team.getCoach(), nullptr);
 
-    // 持久化到 CSV，检查 coachId 不再出现
     std::vector<Team*> vec{ &team };
     SaveEntities<Team>(csvPath, vec);
 
     std::ifstream ifs(csvPath); std::string line; std::getline(ifs, line);
-    // 假设 toCsv 把 coachId 写成第三字段，“99” 不应再出现
+
     EXPECT_EQ(line.find(",99,"), std::string::npos);
 
     delete coachB;
