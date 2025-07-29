@@ -5,6 +5,8 @@
 #include <string>
 #include "member.h"
 #include "coach.h"
+class Club;
+
 
 class Team {
 private:
@@ -30,6 +32,13 @@ public:
     Team operator+(const Team& other) const;
     int getId() const;
     size_t getMemberCount() const;
+    const std::string& getName() const;
+
+
+
+    std::string toCsv() const;
+
+    static Team* fromCsv(const std::string& line, Club& club);
 };
 
 #endif // TEAM_H
