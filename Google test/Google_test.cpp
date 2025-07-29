@@ -514,7 +514,8 @@ protected:
 
 
 
-TEST_F(TeamOpTest, CreateTeamAndPersist_WithAutoId) {
+TEST_F(TeamOpTest, CreateTeamAndPersist_WithAutoId) 
+{
     Club club("MyClub");
     Coach* coach = new Coach("Zoe", "Basketball", 42);
     club.addCoach(coach);
