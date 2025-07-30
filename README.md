@@ -10,8 +10,15 @@ This repository contains a C++ command line application for managing a sports cl
   - Coaches can manage events and teams and register members for events.
   - Administrators can list/add/delete members, coaches, teams and events and manage user accounts.
 - **Club Management** – Classes for members, coaches, teams and events with persistence using CSV files.
+- **Club Management** – Classes for members, coaches, teams and events.
+- **Persistent CSV Storage** – All entities are stored in CSV files.
 - **Event Applications** – Athletes may apply for events and coaches can approve or reject applications.
 - **Unit Tests** – GoogleTest based tests covering authentication, CSV conversion and club operations.
+- **Unique ID Assignment** – New members, coaches, teams and events receive unique identifiers.
+- **Event Scheduling** – Conflict detection prevents overlapping dates.
+- **Team Management** – Members can be added or removed and coaches assigned to teams.
+- **Administration** – List and edit users, teams and events.
+- **Event Rescheduling** – Existing events can be rescheduled.
 
 ## Building
 
